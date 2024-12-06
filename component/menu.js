@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View, ImageBackground } from 'react
 export default function Menu({ navigation }) {
   return (
     <ImageBackground 
-      source={require('../assets/celular fondo.jpg')} // Ruta de la imagen en assets
+      source={require('../assets/fondo3.jpg')} // Ruta de la imagen en assets
       style={styles.menuContainer}
     >
       <Text style={styles.title}>Banco Azteca</Text>
