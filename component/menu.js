@@ -7,7 +7,7 @@ export default function Menu({ navigation }) {
       source={require('../assets/fondo3.jpg')} // Ruta de la imagen en assets
       style={styles.menuContainer}
     >
-      <Text style={styles.title}>Banco Azteca</Text>
+      <Text style={styles.title}>BANMEX</Text>
 
       <TouchableOpacity 
         style={styles.menuButton} 
