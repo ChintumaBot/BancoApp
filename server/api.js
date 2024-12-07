@@ -64,16 +64,16 @@ app.post('/register', (req, res) => {
 
 // Ruta para iniciar sesión
 app.post('/login', (req, res) => {
-  const { email, contraseña } = req.body;
+  const { correo, contraseña } = req.body;
 
   // Verificar que los campos estén completos
-  if (!email || !contraseña) {
+  if (!correo || !contraseña) {
     return res.status(400).json({ message: 'Por favor ingrese el correo y la contraseña' });
   }
 
   // Consultar el usuario en la base de datos
   const query = 'SELECT * FROM usuarios WHERE email = ?';
-  db.query(query, [email], (err, result) => {
+  db.query(query, [correo], (err, result) => {
     if (err) {
       console.log(err);
       return res.status(500).json({ message: 'Error al intentar iniciar sesión' });
@@ -86,21 +86,26 @@ app.post('/login', (req, res) => {
 
     // Verificar la contraseña
     bcrypt.compare(contraseña, result[0].contraseña, (err, isMatch) => {
+      console.log('Contraseña ingresada:', contraseña);
+      console.log('Hash almacenado:', result[0].contraseña);
+      console.log('Resultado comparación:', isMatch);
+    
       if (err) {
         console.log(err);
         return res.status(500).json({ message: 'Error al verificar la contraseña' });
       }
-
+    
       if (!isMatch) {
         return res.status(400).json({ message: 'Contraseña incorrecta' });
       }
-
+    
       res.status(200).json({ message: 'Inicio de sesión exitoso', user: result[0] });
     });
+    
   });
 });
 
 // Iniciar servidor
 app.listen(port, () => {
-  console.log(`Servidor corriendo en http://localhost:3000`);
-});
+  console.log("Servidor corriendo en http://localhost:3000");
+}); 
