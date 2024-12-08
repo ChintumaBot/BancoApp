@@ -1,12 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ImageBackground } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 
 export default function Menu({ navigation }) {
   return (
-    <ImageBackground 
-      source={require('../assets/fondo3.jpg')} // Ruta de la imagen en assets
-      style={styles.menuContainer}
-    >
+    <View style={styles.menuContainer}>
+      {/* Imagen arriba del nombre de la app */}
+      <Image
+        source={require('../assets/logo.png')} // Ruta de la imagen del logo
+        style={styles.logo}
+      />
+
       <Text style={styles.title}>BANMEX</Text>
 
       <TouchableOpacity 
@@ -22,7 +25,7 @@ export default function Menu({ navigation }) {
       >
         <Text style={styles.menuText}>Registrarse</Text>
       </TouchableOpacity>
-    </ImageBackground>
+    </View>
   );
 }
 
@@ -31,7 +34,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#0e78ac',  // Color de fondo actualizado
     padding: 20,
+  },
+  logo: {
+    width: 120,  // Ajusta el tamaño de la imagen según tus necesidades
+    height: 120, // Ajusta el tamaño de la imagen según tus necesidades
+    marginBottom: 20, // Espacio entre la imagen y el nombre
   },
   title: {
     fontSize: 24,

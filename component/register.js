@@ -16,24 +16,21 @@ export default function Register() {
         },
         body: JSON.stringify({ nombre, apellido, email: correo, contraseña }),
       });
-  
       const data = await response.json();
-      console.log("Response Data:", data);  // Ver los datos recibidos del servidor
-  
+      console.log(data.message);
       if (response.ok) {
         alert('Usuario registrado con éxito');
       } else {
-        alert(`Error al registrar el usuario: ${data.message || 'desconocido'}`);
+        alert('Error al registrar el usuario');
       }
     } catch (error) {
-      console.error('Error en la conexión:', error);
-      alert('Error al conectar con el servidor');
+      console.error('Error:', error);
     }
   };
 
   return (
     <ImageBackground
-      source={require('../assets/fondo3.jpg')}
+      source={require('../assets/fondo4.png')}
       style={styles.background}
       resizeMode="cover"
     >
@@ -89,32 +86,45 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     marginTop: 50,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Fondo oscuro con transparencia
+    borderRadius: 10,
+    margin: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     color: '#fff',
     marginBottom: 20,
     fontWeight: 'bold',
+    fontFamily: 'Roboto', // Fuente moderna
   },
   input: {
     width: '100%',
-    padding: 10,
-    marginBottom: 15,
+    padding: 15,
+    marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    backgroundColor: '#fff',
+    borderColor: '#fff',
+    borderRadius: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Fondo blanco con opacidad
+    fontSize: 18,
+    color: '#333',
+    fontFamily: 'Roboto', // Fuente moderna
   },
   button: {
     padding: 15,
     backgroundColor: '#007bff',
-    borderRadius: 5,
+    borderRadius: 10,
     width: '100%',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,  // Sombra para Android
   },
   buttonText: {
     color: '#fff',
-    fontSize: 20,
-  },
+    fontSize: 20,
+    fontWeight: 'bold',
+    fontFamily: 'Roboto', // Fuente moderna
+  },
 });

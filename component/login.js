@@ -1,126 +1,136 @@
-import React, { useState } from 'react';
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  Text,
-  Alert,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const LoginScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function Login({ navigation }) {
+  const [correo, setCorreo] = useState('');
+  const [contraseña, setContraseña] = useState('');
+
+  
+  useEffect(() => {
+    const cargarDatosGuardados = async () => {
+      try {
+        const correoGuardado = await AsyncStorage.getItem('correo');
+        const contraseñaGuardada = await AsyncStorage.getItem('contraseña');
+        if (correoGuardado) setCorreo(correoGuardado);
+        if (contraseñaGuardada) setContraseña(contraseñaGuardada);
+      } catch (error) {
+        console.error('Error al cargar los datos guardados:', error);
+      }
+    };
+    cargarDatosGuardados();
+  }, []);
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://192.168.1.254:3000/login', {
+      const response = await fetch('http://192.168.1.108:3000/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),  // Se corrigió aquí
+        body: JSON.stringify({ email: correo, contraseña }),
       });
-
+  
       const data = await response.json();
       if (response.ok) {
-        // Guardar el token en AsyncStorage
-        await AsyncStorage.setItem('token', data.token);
-        Alert.alert('Login exitoso');
+        alert('Inicio de sesión exitoso');
+        
+        await AsyncStorage.setItem('correo', correo);
+        await AsyncStorage.setItem('contraseña', contraseña);
+  
+        // Aquí cambia "Inicio" por "Bancoapp"
+        navigation.navigate('Bancoapp');
       } else {
-        Alert.alert(data.message || 'Error al iniciar sesión');
+        alert(data.message || 'Error al iniciar sesión');
       }
     } catch (error) {
-      Alert.alert('Error al conectar con el servidor');
+      console.error('Error:', error);
     }
   };
+  
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
+    <ImageBackground
+      source={require('../assets/fondo4.png')}
+      style={styles.background}
+      resizeMode="cover"
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.innerContainer}>
-          <Text style={styles.title}>Iniciar Sesión</Text>
-          <TextInput
-            placeholder="Correo electrónico"
-            placeholderTextColor="#aaa"
-            value={email}
-            onChangeText={setEmail}
-            style={styles.input}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <TextInput
-            placeholder="Contraseña"
-            placeholderTextColor="#aaa"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-            style={styles.input}
-          />
-          <TouchableOpacity onPress={handleLogin} style={styles.button}>
-            <Text style={styles.buttonText}>Iniciar sesión</Text>
-          </TouchableOpacity>
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+      <View style={styles.container}>
+        <Text style={styles.title}>Iniciar Sesión</Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Correo"
+          value={correo}
+          onChangeText={setCorreo}
+          keyboardType="email-address"
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Contraseña"
+          value={contraseña}
+          onChangeText={setContraseña}
+          secureTextEntry
+        />
+
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Ingresar</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
-};
+}
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
-    justifyContent: 'center',
-  },
-  innerContainer: {
-    padding: 20,
-    marginHorizontal: 20,
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-    color: '#333',
-  },
-  input: {
-    height: 50,
-    backgroundColor: '#f1f3f5',
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    fontSize: 16,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#ced4da',
-  },
-  button: {
-    height: 50,
-    backgroundColor: '#007bff',
-    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',  // Fondo transparente para dar un look más moderno
+    borderRadius: 10,
+    margin: 10,
+  },
+  title: {
+    fontSize: 28,
+    color: '#fff',
+    marginBottom: 20,
+    fontWeight: 'bold',
+    fontFamily: 'Roboto',  // Fuente moderna
+  },
+  input: {
+    width: '100%',
+    padding: 15,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#fff',
+    borderRadius: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Fondo blanco con opacidad
+    fontSize: 18,
+    color: '#333',
+    fontFamily: 'Roboto',  // Fuente moderna
+  },
+  button: {
+    padding: 15,
+    backgroundColor: '#007bff',
+    borderRadius: 10,
+    width: '100%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,  // Sombra para Android
   },
   buttonText: {
-    color: '#ffffff',
-    fontSize: 16,
+    color: '#fff',
+    fontSize: 20,
     fontWeight: 'bold',
+    fontFamily: 'Roboto',  // Fuente moderna
   },
 });
-
-export default LoginScreen;
