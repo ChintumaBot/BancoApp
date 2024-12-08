@@ -1,54 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, ImageBackground } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Login({ navigation }) {
+export default function Register() {
+  const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
   const [correo, setCorreo] = useState('');
   const [contraseña, setContraseña] = useState('');
 
-  // Cargar datos de AsyncStorage si existen (persistencia)
-  useEffect(() => {
-    const cargarDatosGuardados = async () => {
-      try {
-        const correoGuardado = await AsyncStorage.getItem('correo');
-        if (correoGuardado) setCorreo(correoGuardado);
-      } catch (error) {
-        console.error('Error al cargar los datos guardados:', error);
-      }
-    };
-    cargarDatosGuardados();
-  }, []);
-
-  // Función que maneja el inicio de sesión
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
-      const response = await fetch('http://192.168.1.108:3000/login', {
+      const response = await fetch('http://192.168.1.108:3000/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: correo, contraseña }),
+        body: JSON.stringify({ nombre, apellido, email: correo, contraseña }),
       });
-
       const data = await response.json();
+      console.log(data.message);
       if (response.ok) {
-        alert('Inicio de sesión exitoso');
-
-        // Guarda solo el correo en AsyncStorage para persistencia
-        await AsyncStorage.setItem('correo', correo);
-
-        // Navegar al dashboard principal
-        navigation.navigate('Bancoapp');
+        alert('Usuario registrado con éxito');
       } else {
-        alert(data.message || 'Error al iniciar sesión');
+        alert('Error al registrar el usuario');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('No se pudo conectar con el servidor');
     }
   };
 
-  // UI del formulario de login
   return (
     <ImageBackground
       source={require('../assets/fondo4.png')}
@@ -56,7 +35,21 @@ export default function Login({ navigation }) {
       resizeMode="cover"
     >
       <View style={styles.container}>
-        <Text style={styles.title}>Iniciar Sesión</Text>
+        <Text style={styles.title}>Registro</Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Nombre"
+          value={nombre}
+          onChangeText={setNombre}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Apellido"
+          value={apellido}
+          onChangeText={setApellido}
+        />
 
         <TextInput
           style={styles.input}
@@ -74,8 +67,8 @@ export default function Login({ navigation }) {
           secureTextEntry
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Ingresar</Text>
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+          <Text style={styles.buttonText}>Registrarse</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -92,7 +85,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',  // Fondo transparente para dar un look más moderno
+    marginTop: 50,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Fondo oscuro con transparencia
     borderRadius: 10,
     margin: 10,
   },
@@ -101,7 +95,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginBottom: 20,
     fontWeight: 'bold',
-    fontFamily: 'Roboto',
+    fontFamily: 'Roboto', // Fuente moderna
   },
   input: {
     width: '100%',
@@ -110,10 +104,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#fff',
     borderRadius: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Fondo blanco con opacidad
     fontSize: 18,
     color: '#333',
-    fontFamily: 'Roboto',
+    fontFamily: 'Roboto', // Fuente moderna
   },
   button: {
     padding: 15,
@@ -131,6 +125,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 20,
     fontWeight: 'bold',
-    fontFamily: 'Roboto',
+    fontFamily: 'Roboto', // Fuente moderna
   },
 });

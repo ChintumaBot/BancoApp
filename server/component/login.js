@@ -6,12 +6,14 @@ export default function Login({ navigation }) {
   const [correo, setCorreo] = useState('');
   const [contraseña, setContraseña] = useState('');
 
-  // Cargar datos de AsyncStorage si existen (persistencia)
+  
   useEffect(() => {
     const cargarDatosGuardados = async () => {
       try {
         const correoGuardado = await AsyncStorage.getItem('correo');
+        const contraseñaGuardada = await AsyncStorage.getItem('contraseña');
         if (correoGuardado) setCorreo(correoGuardado);
+        if (contraseñaGuardada) setContraseña(contraseñaGuardada);
       } catch (error) {
         console.error('Error al cargar los datos guardados:', error);
       }
@@ -19,7 +21,6 @@ export default function Login({ navigation }) {
     cargarDatosGuardados();
   }, []);
 
-  // Función que maneja el inicio de sesión
   const handleLogin = async () => {
     try {
       const response = await fetch('http://192.168.1.108:3000/login', {
@@ -29,26 +30,25 @@ export default function Login({ navigation }) {
         },
         body: JSON.stringify({ email: correo, contraseña }),
       });
-
+  
       const data = await response.json();
       if (response.ok) {
         alert('Inicio de sesión exitoso');
-
-        // Guarda solo el correo en AsyncStorage para persistencia
+        
         await AsyncStorage.setItem('correo', correo);
-
-        // Navegar al dashboard principal
+        await AsyncStorage.setItem('contraseña', contraseña);
+  
+        // Aquí cambia "Inicio" por "Bancoapp"
         navigation.navigate('Bancoapp');
       } else {
         alert(data.message || 'Error al iniciar sesión');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('No se pudo conectar con el servidor');
     }
   };
+  
 
-  // UI del formulario de login
   return (
     <ImageBackground
       source={require('../assets/fondo4.png')}
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginBottom: 20,
     fontWeight: 'bold',
-    fontFamily: 'Roboto',
+    fontFamily: 'Roboto',  // Fuente moderna
   },
   input: {
     width: '100%',
@@ -110,10 +110,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#fff',
     borderRadius: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Fondo blanco con opacidad
     fontSize: 18,
     color: '#333',
-    fontFamily: 'Roboto',
+    fontFamily: 'Roboto',  // Fuente moderna
   },
   button: {
     padding: 15,
@@ -131,6 +131,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 20,
     fontWeight: 'bold',
-    fontFamily: 'Roboto',
+    fontFamily: 'Roboto',  // Fuente moderna
   },
 });
