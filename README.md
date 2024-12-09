@@ -1,4 +1,9 @@
 BancoApp - App de Banca Móvil
+
+Integrantes:
+-Ramirez Cota Alejandro
+-Romero Ortiz Edgar Daniel
+
 Este proyecto es una aplicación móvil de banca, en la que los usuarios tienen la posibilidad de registrar cuentas, acceder a ellas, crear códigos QR para transacciones, escanear estos códigos QR para obtener fondos y consultar el registro de operaciones. La aplicación se ha creado con Expo Go, vinculada con un backend creado en Node.js.
 
 Software necesario
@@ -11,13 +16,10 @@ Axios
 Bcryptjs
 QRCode
 
-
-
+Para instalar el proyecto es con el comando "npm install expo" despues procedemos a insertar el comando "npx expo start" para asi generar el QR que se escaneara con la aplicación expo go. Para hechar andar el server es en una terminal poner cd, arrastrar la carpeta del server que se ubica en la carpeta de la aplicacion, luego poner el comando "node api.js" para conectar al server mysql, por ultimo en workbench se visualizan las tablas para los usuarios.
 
 Se cambio debido a problemas y esta mejor adaptado
 actualmente login y register con una ventana al bano en si de a app
-edgar daniel romero ortiz
-alejandro ramirez cota
 para correr la app los comandos son npm install expo para después ingresar npx expo start para hacer que el proyecto genere el codigo Qr el cual se escaneara por medio de la aplicación expo go
 
 La aplicación móvil bancaria es una herramienta moderna y funcional diseñada para gestionar cuentas financieras de manera segura y eficiente. Su objetivo principal es permitir a los usuarios realizar transacciones bancarias básicas y personalizar su experiencia, manteniendo un diseño minimalista y moderno.
