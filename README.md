@@ -1,3 +1,19 @@
+BancoApp - App de Banca Móvil
+Este proyecto es una aplicación móvil de banca, en la que los usuarios tienen la posibilidad de registrar cuentas, acceder a ellas, crear códigos QR para transacciones, escanear estos códigos QR para obtener fondos y consultar el registro de operaciones. La aplicación se ha creado con Expo Go, vinculada con un backend creado en Node.js.
+
+Software necesario
+Node.js (Recomendado usar la versión LTS)
+Expo Go (para ver la aplicación móvil en tu dispositivo)
+MySQL (para gestionar la base de datos)
+Dependencias
+Expo SDK
+Axios
+Bcryptjs
+QRCode
+
+
+
+
 Se cambio debido a problemas y esta mejor adaptado
 actualmente login y register con una ventana al bano en si de a app
 edgar daniel romero ortiz

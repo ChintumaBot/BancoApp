@@ -1,33 +1,64 @@
-const express = require('express');
-const router = express.Router();
-const db = require('./db'); // Asegúrate de que este archivo exporte la conexión a la base de datos
-
-// Registrar una transacción
-router.post('/', (req, res) => {
+app.post('/transactions', (req, res) => {
   const { senderId, receiverId, amount } = req.body;
-  const query = 'INSERT INTO transactions (sender_id, receiver_id, amount) VALUES (?, ?, ?)';
 
-  db.query(query, [senderId, receiverId, amount], (err, result) => {
+  // Iniciar una transacción de base de datos
+  const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'bancoapp',
+  });
+
+  connection.beginTransaction((err) => {
     if (err) {
-      console.error(err);
-      return res.status(500).json({ message: 'Error al registrar la transacción' });
+      console.error('Error al iniciar la transacción:', err);
+      return res.status(500).json({ message: 'Error al iniciar la transacción' });
     }
-    res.status(200).json({ message: 'Transacción registrada exitosamente' });
+
+    // 1. Insertar la transacción en la tabla de transactions
+    const query = 'INSERT INTO transactions (sender_id, receiver_id, amount) VALUES (?, ?, ?)';
+    connection.query(query, [senderId, receiverId, amount], (err, result) => {
+      if (err) {
+        return connection.rollback(() => {
+          console.error('Error al registrar la transacción:', err);
+          res.status(500).json({ message: 'Error al registrar la transacción' });
+        });
+      }
+
+      // 2. Actualizar el saldo del remitente
+      const updateSenderQuery = 'UPDATE users SET saldo = saldo - ? WHERE id = ?';
+      connection.query(updateSenderQuery, [amount, senderId], (err, result) => {
+        if (err) {
+          return connection.rollback(() => {
+            console.error('Error al actualizar el saldo del remitente:', err);
+            res.status(500).json({ message: 'Error al actualizar el saldo del remitente' });
+          });
+        }
+
+        // 3. Actualizar el saldo del receptor
+        const updateReceiverQuery = 'UPDATE users SET saldo = saldo + ? WHERE id = ?';
+        connection.query(updateReceiverQuery, [amount, receiverId], (err, result) => {
+          if (err) {
+            return connection.rollback(() => {
+              console.error('Error al actualizar el saldo del receptor:', err);
+              res.status(500).json({ message: 'Error al actualizar el saldo del receptor' });
+            });
+          }
+
+          // Si todo está bien, confirmamos la transacción
+          connection.commit((err) => {
+            if (err) {
+              return connection.rollback(() => {
+                console.error('Error al confirmar la transacción:', err);
+                res.status(500).json({ message: 'Error al confirmar la transacción' });
+              });
+            }
+
+            res.status(200).json({ message: 'Transacción registrada y saldos actualizados' });
+            connection.end();
+          });
+        });
+      });
+    });
   });
 });
-
-// Obtener transacciones de un usuario
-router.get('/:userId', (req, res) => {
-  const { userId } = req.params;
-  const query = 'SELECT * FROM transactions WHERE sender_id = ? OR receiver_id = ?';
-
-  db.query(query, [userId, userId], (err, results) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ message: 'Error al obtener transacciones' });
-    }
-    res.status(200).json({ transactions: results });
-  });
-});
-
-module.exports = router;
